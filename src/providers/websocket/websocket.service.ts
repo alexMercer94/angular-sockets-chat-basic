@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
+import { User } from '../../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketService {
   public socketStatus = false;
+  public user: User;
 
   constructor(private socket: Socket) {
+    this.loadFromStorage();
     this.checkStatus();
   }
 
@@ -46,5 +49,35 @@ export class WebsocketService {
    */
   listen(event: string): Observable<any> {
     return this.socket.fromEvent(event);
+  }
+
+  /**
+   * Enter in aplication
+   * @param name User's name
+   */
+  loginWS(name: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.emit('set-user', { name }, res => {
+        this.user = new User(name);
+        this.saveInStorage();
+        resolve();
+      });
+    });
+  }
+
+  /**
+   * Save data in LocalStorage
+   */
+  saveInStorage(): void {
+    localStorage.setItem('user', JSON.stringify(this.user));
+  }
+
+  /**
+   * Load data from LocalStorage
+   */
+  loadFromStorage() {
+    if (localStorage.getItem('user')) {
+      this.user = JSON.parse(localStorage.getItem('user'));
+    }
   }
 }
