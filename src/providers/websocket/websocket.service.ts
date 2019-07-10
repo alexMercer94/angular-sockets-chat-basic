@@ -78,6 +78,14 @@ export class WebsocketService {
   loadFromStorage() {
     if (localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'));
+      this.loginWS(this.user.name);
     }
+  }
+
+  /**
+   * Get user
+   */
+  getUser(): User {
+    return this.user;
   }
 }

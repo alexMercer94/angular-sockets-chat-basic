@@ -8,9 +8,13 @@ import { WebsocketService } from '../websocket/websocket.service';
 export class ChatService {
   constructor(private wsService: WebsocketService) {}
 
-  sendMessage(message: string) {
+  /**
+   * Sens a message to server
+   * @param message Message to send to server
+   */
+  sendMessage(message: string): void {
     const payload = {
-      from: 'Mercer',
+      from: this.wsService.getUser().name,
       message
     };
 
@@ -22,5 +26,12 @@ export class ChatService {
    */
   getMessages(): Observable<any> {
     return this.wsService.listen('new-message');
+  }
+
+  /**
+   * Listen socket `private-message` from server
+   */
+  getPrivateMessages() {
+    return this.wsService.listen('private-message');
   }
 }
