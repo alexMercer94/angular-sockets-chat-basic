@@ -10,4 +10,11 @@ export class MessagesComponent implements OnInit {
   constructor(public wsService: WebsocketService) {}
 
   ngOnInit() {}
+
+  /**
+   * End user's session
+   */
+  logout() {
+    this.wsService.logoutWS();
+  }
 }

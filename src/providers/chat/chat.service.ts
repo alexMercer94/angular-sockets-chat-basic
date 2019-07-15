@@ -31,7 +31,18 @@ export class ChatService {
   /**
    * Listen socket `private-message` from server
    */
-  getPrivateMessages() {
+  getPrivateMessages(): Observable<any> {
     return this.wsService.listen('private-message');
+  }
+
+  /**
+   * Listen sockets `active-users` from server
+   */
+  getActiveUsers(): Observable<any> {
+    return this.wsService.listen('active-users');
+  }
+
+  emitActiveUsers() {
+    this.wsService.emit('get-users');
   }
 }

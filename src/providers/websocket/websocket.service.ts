@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { User } from '../../models/user.model';
@@ -10,7 +11,7 @@ export class WebsocketService {
   public socketStatus = false;
   public user: User;
 
-  constructor(private socket: Socket) {
+  constructor(private socket: Socket, private router: Router) {
     this.loadFromStorage();
     this.checkStatus();
   }
@@ -22,6 +23,7 @@ export class WebsocketService {
     this.socket.on('connect', () => {
       console.log('Connected to Server');
       this.socketStatus = true;
+      this.loadFromStorage();
     });
 
     this.socket.on('disconnect', () => {
@@ -63,6 +65,19 @@ export class WebsocketService {
         resolve();
       });
     });
+  }
+
+  /**
+   * End user's session but not finish socket
+   */
+  logoutWS() {
+    this.user = null;
+    localStorage.removeItem('user');
+    const payload = {
+      name: 'unknown'
+    };
+    this.emit('set-user', payload, () => {});
+    this.router.navigateByUrl('');
   }
 
   /**
